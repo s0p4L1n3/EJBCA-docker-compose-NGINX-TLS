@@ -317,138 +317,13 @@ Now copy paste these three files into you nginx/certs folder on your host where 
 <summary> ejbca.conf </summary>
 
 ```
-server {
-    listen 80;
-    server_name pki.iss.lan;
-    location / {
-        proxy_pass                              http://ejbca-node1:8081/;
-        proxy_set_header Host                   $http_host;
-        proxy_set_header X-Real-IP              $remote_addr;
-        proxy_set_header X-Forwarded-For        $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto      $scheme;
 
-        return 301 https://$host$request_uri;
-
-  }
-}
-
-
-server {
-   listen 443 ssl;
-   server_name pki.iss.lan;
-   ssl_certificate     /etc/nginx/certs/management_cert.pem;
-   ssl_certificate_key /etc/nginx/certs/management_pvkey.pem;
-
-
-   ssl_client_certificate /etc/nginx/certs/CA_Management.pem;
-   ssl_verify_client optional;
-
-
-   location / {
-
-   if ($ssl_client_verify != SUCCESS) {
-     return 403;
-   }
-
-        proxy_pass                              http://ejbca-node1:8082/;
-        proxy_set_header Host                   $http_host;
-        proxy_set_header X-Real-IP              $remote_addr;
-        proxy_set_header X-Forwarded-For        $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto      $scheme;
-        proxy_set_header SSL_CLIENT_CERT        $ssl_client_cert;
-
-    }
-
-    add_header X-Frame-Options "SAMEORIGIN" always;
-    add_header X-Content-Type-Options nosniff;
-    add_header X-XSS-Protection "1; mode=block";
-    add_header Strict-Transport-Security "max-age=31536000; includeSubdomains";
-
-
-}
 ```
 </details>
 
-Now in the docker compose file
-
-Here's the complete configuration with NGINX:
-
-<details>
-
-<summary> docker-compose.yml </summary>
-
-```
-version: '3.9'
-services:
-  ejbca-database:
-    container_name: ejbca-database
-    image: mariadb:latest
-    restart: always
-    #check your user id with the command "id", applying ID user as owner on volume, otherwise systemd-coredump has ownership
-    user: "1001:1001"
-    networks:
-      - database-bridge
-    environment:
-      - MYSQL_ROOT_PASSWORD=foo123
-      - MYSQL_DATABASE=ejbca
-      - MYSQL_USER=ejbca
-      - MYSQL_PASSWORD=ejbca
-    volumes:
-      - ./data:/var/lib/mysql:rw
-  ejbca-node1:
-    hostname: ejbca-node1
-    container_name: ejbca
-    image: keyfactor/ejbca-ce:latest
-    depends_on:
-      - ejbca-database
-    networks:
-      - database-bridge
-      - ejbca-bridge
-    environment:
-      - DATABASE_JDBC_URL=jdbc:mariadb://ejbca-database:3306/ejbca?characterEncoding=UTF-8
-      - LOG_LEVEL_APP=INFO
-      - LOG_LEVEL_SERVER=INFO
-      - TLS_SETUP_ENABLED=true
-      - DATABASE_USER=ejbca
-      - DATABASE_PASSWORD=ejbca
-      - PASSWORD_ENCRYPTION_KEY=changeit
-      - CA_KEYSTOREPASS=changeit
-      - EJBCA_CLI_DEFAULTPASSWORD=ejbca
-      - EJBCA_CLI_DEFAULT_USERNAME=ejbca
-      - EJBCA_CLI_DEFAULT_PASSWORD=ejbca
-      - TZ=Europe/Paris
-      - PROXY_HTTP_BIND=0.0.0.0
 
 
-  nginx:
-    hostname: ejbca-proxy
-    container_name: ejbca-proxy
-    image: nginx
-    depends_on:
-      - ejbca-node1
-    volumes:
-      - ./nginx/conf/ejbca.conf:/etc/nginx/conf.d/ejbca.conf
-      - ./nginx/certs:/etc/nginx/certs/
-      - /run/docker.sock:/var/run/docker.sock:ro
-    ports:
-      - 80:80
-      - 443:443
-    restart: always
-    networks:
-      - proxy-bridge
-      - ejbca-bridge
-
-
-networks:
-  database-bridge:
-    driver: bridge
-  ejbca-bridge:
-    driver: bridge
-  proxy-bridge:
-    driver: bridge
-```
-  
-</details>
+[Download the docker-compose for EJBCA with NGINX](https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/blob/main/ejbca-nginx-TLS/docker-compose.yml)
 
 What changes between old docker-compose and the new one for NGINX
 
