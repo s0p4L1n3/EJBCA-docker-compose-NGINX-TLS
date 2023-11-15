@@ -1,0 +1,51 @@
+version: '3.9'
+
+services:
+  ejbca-database:
+    container_name: ejbca-database
+    image: mariadb:latest
+    restart: always
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_bin --log-bin
+    #check your user id with the command "id", applying ID user as owner on volume, otherwise systemd-coredump has ownership
+    user: "1001:1001"
+    networks:
+      - database-bridge
+    environment:
+      - MYSQL_ROOT_PASSWORD=foo123
+      - MYSQL_DATABASE=ejbca
+      - MYSQL_USER=ejbca
+      - MYSQL_PASSWORD=ejbca
+    volumes:
+      - ./data:/var/lib/mysql:rw
+
+  ejbca-node1:
+    hostname: ejbca-node1
+    container_name: ejbca
+    image: keyfactor/ejbca-ce:latest
+    depends_on:
+      - ejbca-database
+    networks:
+      - database-bridge
+      - ejbca-bridge
+    environment:
+      - DATABASE_JDBC_URL=jdbc:mariadb://ejbca-database:3306/ejbca?characterEncoding=UTF-8
+      - LOG_LEVEL_APP=INFO
+      - LOG_LEVEL_SERVER=INFO
+      - TLS_SETUP_ENABLED=true
+      - DATABASE_USER=ejbca
+      - DATABASE_PASSWORD=ejbca
+      - PASSWORD_ENCRYPTION_KEY=changeit
+      - CA_KEYSTOREPASS=changeit
+      - EJBCA_CLI_DEFAULTPASSWORD=changeit
+      - EJBCA_CLI_DEFAULT_USERNAME=ejbca
+      - EJBCA_CLI_DEFAULT_PASSWORD=changeit
+      - TZ=Europe/Paris
+   ports:
+      - "80:8080"
+      - "443:8443"
+
+networks:
+  database-bridge:
+    driver: bridge
+  ejbca-bridge:
+    driver: bridge
