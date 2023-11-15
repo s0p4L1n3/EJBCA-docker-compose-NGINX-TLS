@@ -344,7 +344,10 @@ What changes between old docker-compose and the new one for NGINX
 
 
 
+## Issues during my testings:
 
+- [EJBCA CE docker compose behind proxy, ManagementCA not created and no adminweb access](https://github.com/Keyfactor/ejbca-ce/discussions/302)
+- [SuperAdmin can not match rules anymore](https://github.com/Keyfactor/ejbca-ce/discussions/305)
 
 
 
