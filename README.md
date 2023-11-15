@@ -1,6 +1,5 @@
 # EJBCA-docker-compose-NGINX-TLS
 
-# ejbca-docker-nginx
 [LAB DURATION = 1h]
 
 Steps to deploy EJBCA first without proxy, then deploy the proxy and EJBCA behind it in production like and on premise.
