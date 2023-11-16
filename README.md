@@ -177,9 +177,7 @@ You will need to edit it and change managementCA to the SUB CA you will create (
 
 <img width="373" alt="image" src="https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/assets/126569468/2c4eac85-4733-4593-bbc6-1df4c40e2ff1">
 
-Follow then [this guide](https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/blob/main/tutorial-create-a-pki-hierarchy-in-ejbca.md) to create the ROOT CA and SUB CA based on the imported certificate profiles.
-
-Create also the certificate on [Steps 3:](https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/blob/main/tutorial-issue-tls-server-certificates-with-ejbca.md) 
+Follow then [this guide](https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/blob/main/tutorial-create-a-pki-hierarchy-in-ejbca.md) starting from STEP 2
 
 # NGINX as Frontend
 
