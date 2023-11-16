@@ -24,58 +24,28 @@ With the SuperAdmin.p12, you can create the ROOT CA and SUB CA and then sign a W
 
 Prerequites for RHEL 9/Rocky Linux 9/Alma Linux 9
 
-- With root user:
+- Create user for docker
 
 a. Create user and change is home folder (it can be any folder)
 ```
-adduser -m -d /opt pki
-```
-
-b. Add pki as owner of /opt
-```
-chown -R pki:pki /opt
-```
-
-c. Add a password
-```
+adduser -m -d /pki pki
+chown -R pki:pki /pki
 passwd pki
-```
-
-d. Add pki to sudoers
-```
 echo 'pki    ALL=(ALL)       ALL' | sudo EDITOR='tee -a' visudo
-```
-
-e. Log as pki user
-```
 su - pki
-```
-
-- With pki user:
-
-a. update the host
-```
-sudo dnf update -y
-```
-
-b. Download repo and install docker
-```
-sudo dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-sudo dnf install -y docker-ce docker-ce-cli containerd.io
-```
-
-c. Add pki to docker group and start docker
-```
 sudo usermod -aG docker pki
-#logout and login again, otherwise it will not be applied 
-sudo systemctl enable docker
-sudo systemctl start docker
+```
+
+b. Download project
+
+```
+git clone https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS.git
 ```
 
 d. Create tree folder project and go inside
 ```
-mkdir -p docker/ejbca/{data,nginx/{certs,conf}}
-cd docker/ejbca
+mkdir -p ejbca-standalone/{data,nginx/{certs,conf}}
+cd ejbca-standalone
 ```
 
 Tree view of docker project:
@@ -85,19 +55,13 @@ Tree view of docker project:
 ├── docker-compose.yml
 ├── nginx
 │──────── ├── certs
-│──────── │──────── ├── management_CA.pem
-│──────── │──────── ├── mgmt_cert.pem
-│──────── │──────── └── mgmt_pvkey.pem
 │──────── └── conf
-│────────     └── ejbca.conf
 ```
 
 - **data** will be the volume for the database, even if the container is deleted, the data will remain
 - **docker-compose.yml** is the main configuration file for this project
-- **nginx** is the folder that will contains, nginx configuration for EJBCA and the certificates
+- **nginx** is the folder that will contains on part 2 nginx configuration for EJBCA and the certificates
   
-
-
 
 ## Initial configuration - EJBCA without proxy
 To start with EJBCA and docker compose, I've followed the official documentation: https://doc.primekey.com/ejbca/tutorials-and-guides/tutorial-start-out-with-ejbca-docker-container
@@ -118,7 +82,6 @@ docker compose logs -f
 ```
 
 At the end of the deployment, you will see some indications on how to get the SuperAdmin.p12 certificate.
-At the moment (21 June 2023) there is a bug and we can not enroll the Initial SuperAdmin through the UI ([check](https://github.com/Keyfactor/ejbca-ce/discussions/302#discussioncomment-6228311)) 
 
 <details>
 
@@ -144,46 +107,30 @@ ejbca            ***************************************************************
 
 </details>
 
+
 #### STEP 1
 
-On your host, check the ip address with `ip address` and on you computer with the web browser (firefox in my case).
-Access to the URL below (which is the temporary url that allow enroll throug UI)
+On your host container, check the ip address with `ip address` and on you computer with the web browser access to the URL: https://your_guest_hosting_docker_ip/ejbca/ra/enrollwithusername.xhtml?username=superadmin
 
-https://192.168.1.150/ejbca/enrol/keystore.jsp
 
 Enter the username and password showed in the previous logs, in my example user: superadmin and password: Mft/2RdSOdf8nmaQAp9dRJBr
 
-<details>
-<summary> Click to view image of enrolment </summary>
-  
-  ![image](https://github.com/s0p4L1N/ejbca-docker-nginx/assets/92848369/83df834b-1da4-4cd4-8468-2aa2242f3c3d)
-  
-</details>
+<img width="844" alt="image" src="https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/assets/126569468/3396a1af-380f-49a7-b621-012f539268d5">
 
+<img width="952" alt="image" src="https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/assets/126569468/707a77f4-0607-4d56-90cb-9bbba3024d32">
 
 #### STEP 2
 
-- Choose the key Specification according to the ManagementCA wich is create with RSA 2048. Select ENDUSER.
+- Choose the key Specification according to the ManagementCA wich is create with RSA 4096.
 
-Click enroll, it will download the superadmin.p12.
-
-<details>
-<summary> Click to view image of enrolment </summary>
-  
-  ![image](https://github.com/s0p4L1N/ejbca-docker-nginx/assets/92848369/c14ba975-2746-458e-a5f1-9edc6af0c80a)
-  
-</details>
-
+Download the PKCS Certificate.
 
 #### STEP 3
 
-Go to Security in Firefox > Certificates > Import and import it, type the password showed in the previous logs.
-<details>
-<summary> Click to view image of enrolment </summary>
-  
-  ![image](https://github.com/s0p4L1N/ejbca-docker-nginx/assets/92848369/ea9ed7c0-7015-4494-add5-e9e45f0d1e54)
-  
-</details>
+Import the certificate with the password showed in the previous logs.
+
+<img width="501" alt="image" src="https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/assets/126569468/000fe93d-80f5-40c8-b175-ee4b71a063b0">
+
 
 #### STEP 4
 And now you access again the PKI UI, a pop up displays, accept the risk
