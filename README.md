@@ -156,16 +156,30 @@ And you have now access to the adminweb thanks to the SuperAdmin certificate.
 
 See next step of PKI Creation.
 
-# Creation of ROOT, SUB CA and TLS Profile and Certs
+# Creation of ROOT CA, SUB CA and TLS Profile Cert
 
 Before continuing with NGINX as frontend for EJBCA, you will need to create your PKI Hierarchy.
 
-Download the template I created and [Import them](https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/tree/main/EJBCA-Profiles-Exported)
+Download the templates I created and [Import them](https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/tree/main/EJBCA-Profiles-Exported)
 
-<img width="1545" alt="image" src="https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/assets/126569468/9d344e3f-6e6d-40b1-a661-52345a4c3146">
+- CA Function
+<img width="1088" alt="image" src="https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/assets/126569468/077bae1a-9b71-4772-9ba2-1ed5d4415d4e">
 
+- RA Function
+<img width="713" alt="image" src="https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/assets/126569468/fdfdbc5e-1d36-41b4-81ca-f7f20eaa665e">
 
-When you are finished with theses two tutorial, come back here.
+With RA Cert profile, you get this message:
+
+`Non existent CAs (with id 1277826676) removed from End Entity Profile TLS Server Profile.`
+
+As you do not have the CAs created yet, the imported profile for server certificate does not know any CA.
+You will need to edit it and change managementCA to the SUB CA you will create (see below for example)
+
+<img width="373" alt="image" src="https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/assets/126569468/2c4eac85-4733-4593-bbc6-1df4c40e2ff1">
+
+Follow then [this guide](https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/blob/main/tutorial-create-a-pki-hierarchy-in-ejbca.md) to create the ROOT CA and SUB CA based on the imported certificate profiles.
+
+Create also the certificate on [Steps 3:](https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/blob/main/tutorial-issue-tls-server-certificates-with-ejbca.md) 
 
 # NGINX as Frontend
 
