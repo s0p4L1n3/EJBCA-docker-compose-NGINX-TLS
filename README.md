@@ -135,6 +135,8 @@ Import the certificate with the password showed in the previous logs.
 #### STEP 4
 And now you access again the PKI UI, a pop up displays, accept the risk
 
+For Admin task: https://your_ip/ejbca/adminweb/
+For RA Task: https://your_ip/ejbca/ra/
 
 <details>
 <summary> Click to view image of enrolment </summary>
@@ -157,11 +159,11 @@ See next step of PKI Creation.
 # Creation of ROOT, SUB CA and TLS Profile and Certs
 
 Before continuing with NGINX as frontend for EJBCA, you will need to create your PKI Hierarchy.
-The steps are commonly the same than the official documentation, I've just added some GIF procedure.
 
-- [Create PKI Hierarchy](https://github.com/s0p4L1N/ejbca-docker-nginx/blob/main/tutorial-create-a-pki-hierarchy-in-ejbca.md)
+Download the template I created and [Import them](https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/tree/main/EJBCA-Profiles-Exported)
 
-- [Issue TLS Certificates](https://github.com/s0p4L1N/ejbca-docker-nginx/blob/main/tutorial-issue-tls-server-certificates-with-ejbca.md)
+<img width="1545" alt="image" src="https://github.com/s0p4L1n3/EJBCA-docker-compose-NGINX-TLS/assets/126569468/9d344e3f-6e6d-40b1-a661-52345a4c3146">
+
 
 When you are finished with theses two tutorial, come back here.
 
