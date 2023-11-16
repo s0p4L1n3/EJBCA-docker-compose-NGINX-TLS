@@ -1,9 +1,9 @@
 version: '3.9'
 
 services:
-  ejbca-database:
+   ejbca-database:
     container_name: ejbca-database
-    image: mariadb:latest
+    image: mariadb:10.5.21
     restart: always
     command: mysqld --character-set-server=utf8 --collation-server=utf8_bin --log-bin
     #check your user id with the command "id", applying ID user as owner on volume, otherwise systemd-coredump has ownership
@@ -18,7 +18,7 @@ services:
     volumes:
       - ./data:/var/lib/mysql:rw
 
-  ejbca-node1:
+   ejbca-node1:
     hostname: ejbca-node1
     container_name: ejbca
     image: keyfactor/ejbca-ce:latest
@@ -34,13 +34,13 @@ services:
       - TLS_SETUP_ENABLED=true
       - DATABASE_USER=ejbca
       - DATABASE_PASSWORD=ejbca
-      - PASSWORD_ENCRYPTION_KEY=changeit
-      - CA_KEYSTOREPASS=changeit
-      - EJBCA_CLI_DEFAULTPASSWORD=changeit
+      - PASSWORD_ENCRYPTION_KEY=changeitforproduction
+      - CA_KEYSTOREPASS=changeitalsoforproduction
+      - EJBCA_CLI_DEFAULTPASSWORD=defaultclipass
       - EJBCA_CLI_DEFAULT_USERNAME=ejbca
-      - EJBCA_CLI_DEFAULT_PASSWORD=changeit
+      - EJBCA_CLI_DEFAULT_PASSWORD=defaultclipass
       - TZ=Europe/Paris
-   ports:
+    ports:
       - "80:8080"
       - "443:8443"
 
